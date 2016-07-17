@@ -76,7 +76,7 @@ window.onload = () => {
       // Change possession
 
       case KEY_CHANGE_POSSESSION:
-        Game.changePossession();
+        if (!Game.paused) Game.changePossession();
         break;
 
       // Pause possession time
