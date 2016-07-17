@@ -9,6 +9,7 @@
   "author": "Joan Peralta <joanperalta13@gmail.com>",
   "license": "ISC",
   "dependencies": {
+    "dialogs": "^1.1.14",
     "electron": "^0.4.1",
     "jquery": "^3.1.0"
   }

@@ -14,14 +14,14 @@
  */
 
 const utils = require('./utils'),
-      $ = require('jquery');
+      Sound = require('./sound'),
+      $ = require('jquery'),
+      Dialogs = require('dialogs');
 
 /**
  * Audio files
  */
 
-const AUDIO_SECONDS = new Audio("../sounds/second.mp3"),
-      AUDIO_BUZZER = new Audio("../sounds/buzzer.mp3");
 
 var isPausedSound,
     isPaused,
@@ -30,9 +30,9 @@ var isPausedSound,
     teams,
     teamPossession;
 
-AUDIO_BUZZER.onended = e => {
+Sound.on('end', Sound.EFFECTS.SOUND_BUZZER, () => {
   isPausedSound = false;
-};
+});
 
 /**
  * Define Class Team
@@ -181,17 +181,24 @@ let Game = (function () {
     start (defaultTime, possession) {
       if (gameTime !== 0) return;
 
-      let time = undefined || defaultTime;
+      // let time = undefined || defaultTime;
 
-      gameTime = time;
-      teamPossession = possession ? 1 : 0;
+      let _default = this.convertTime(defaultTime);
 
-      teams[teamPossession].enablePossessionSeconds();
+      Dialogs().prompt('INSERTE EL TIEMPO DE JUEGO', `${ utils.pad(_default.minutes) }:${ utils.pad(_default.seconds) }`, (time) => {
+        if (time) {
+          time = this.convertTimeFromHourFormat(parseInt(time.split(':')[0]), parseInt(time.split(':')[1]));
+          gameTime = time;
+          teamPossession = possession ? 1 : 0;
 
-      isPaused = true;
+          teams[teamPossession].enablePossessionSeconds();
 
-      this.setGameInterval(time);
-      this.playBuzzerSound();
+          isPaused = true;
+
+          this.setGameInterval(time);
+          this.playBuzzerSound();
+        }
+      });
     }
 
     pause (sound) {
@@ -226,11 +233,11 @@ let Game = (function () {
     }
 
     playBuzzerSound () {
-      AUDIO_BUZZER.play();
+      Sound.playSoundEffect(Sound.EFFECTS.SOUND_BUZZER);
     }
 
     playSecondSound () {
-      AUDIO_SECONDS.play();
+      Sound.playSoundEffect(Sound.EFFECTS.SOUND_SECOND_LEFT);
     }
 
     upgradePoints (secondTeam) {
@@ -249,11 +256,11 @@ let Game = (function () {
       teams[!secondTeam ? 0 : 1].downFoul();
     }
 
-    changePossession () {
-      isPaused = true;
+    changePossession (preventPause) {
+      if(!preventPause) isPaused = true;
 
       for(let count in teams) {
-        teams[count].dissablePossisionSeconds();
+        teams[count].dissablePossisionSeconds(preventPause);
       }
 
       teamPossession = teamPossession === 0 ? 1 : 0;
@@ -261,13 +268,21 @@ let Game = (function () {
       teams[teamPossession].enablePossessionSeconds();
     }
 
-    get timeLeft () {
-      let minutes = Math.floor(gameTime / 60),
-          seconds = gameTime - minutes * 60;
+    convertTime (t) {
+      let minutes = Math.floor(t / 60),
+          seconds = t - minutes * 60;
 
       return {
         minutes, seconds
       };
+    }
+
+    convertTimeFromHourFormat (minutes, seconds) {
+      return (minutes * 60) + seconds;
+    }
+
+    get timeLeft () {
+      return this.convertTime(this.gameTime);
     }
 
     get gameTime () {

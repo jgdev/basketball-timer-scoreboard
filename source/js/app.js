@@ -7,6 +7,10 @@
  * https://opensource.org/licenses/GPL-3.0
  */
 
+/**
+ * Key Controls
+ */
+
 const KEY_PAUSE_GAME = 80,
       KEY_RESTART_GAME = 82,
       KEY_START_GAME = 83,
@@ -17,16 +21,31 @@ const KEY_PAUSE_GAME = 80,
       KEY_FOUL_DOWN = 37,
       KEY_CHANGE_POSSESSION = 71,
       KEY_PAUSE_POSSESSION = 72,
+      KEY_PLAY_BUZZER = 66,
+      GAME_TIME = 780;
 
-      GAME_TIME = 900;
+/**
+ * Define game events
+ */
 
-const Game = new (require('./js/game.js'))();
+const Game = new (require('./js/game.js'))(),
+      Sound = require('./js/sound.js');
 
 window.onload = () => {
   Game.reset();
 
   window.addEventListener('keyup', (e) => {
     console.log(e.keyCode, e);
+
+    if (document.querySelectorAll('.dialog-widget').length) return;
+
+    // Music
+
+    switch (true) {
+
+    }
+
+    // NBA GAME CONTROLS
 
     switch (e.keyCode) {
       
@@ -76,14 +95,46 @@ window.onload = () => {
       // Change possession
 
       case KEY_CHANGE_POSSESSION:
-        if (!Game.paused) Game.changePossession();
+        Game.changePossession(e.shiftKey);
         break;
 
-      // Pause possession time
-        // Game.pausePossessionTime();
-        // break;
+      // Sounds effects
 
-      // Play music
+      case KEY_PLAY_BUZZER:
+        Sound.playSoundEffect(Sound.EFFECTS.SOUND_BUZZER_2);
+        break;
+
+      case Sound.EFFECTS.SOUND_WELCOM_TO_NBA:
+        if (e.altKey) Sound.playSoundEffect(e.keyCode);
+        break;
+
+      case Sound.EFFECTS.SOUND_NO_GOOD:
+        if (e.altKey) Sound.playSoundEffect(e.keyCode);
+        break;
+
+      case Sound.EFFECTS.SOUND_REBOUND:
+        if (e.altKey) Sound.playSoundEffect(e.keyCode);
+        break;
+
+      case Sound.EFFECTS.SOUND_TWO_POINTS:
+        if (e.altKey) Sound.playSoundEffect(e.keyCode);
+        break;
+
+      case Sound.EFFECTS.SOUND_FOR_TWO:
+        if (e.altKey) Sound.playSoundEffect(e.keyCode);
+        break;
+
+      case Sound.EFFECTS.SOUND_BOOM_SHAKALAKA:
+        if (e.altKey) Sound.playSoundEffect(e.keyCode);
+        break;        
+
+      case Sound.EFFECTS.SOUND_BOOM_SHAKALAKA:
+        if (e.altKey) Sound.playSoundEffect(e.keyCode);
+        break;
+
+      case Sound.EFFECTS.SOUND_YES:
+        if (e.altKey) Sound.playSoundEffect(e.keyCode);
+        break;             
 
       default:
         e.preventDefault();
