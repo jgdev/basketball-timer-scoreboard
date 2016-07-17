@@ -1,0 +1,114 @@
+@font-face {
+  font-family: 'digital';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Digital'), url(../fonts/digital-7.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'digital2';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Digital2'), url(../fonts/digital-2.ttf) format('truetype');
+}
+
+body {
+	background-color: #040B1D;
+}
+
+#time {
+	background-color: #1D1D1D;
+	font-family: 'digital';
+	color: red;
+	position: absolute;
+	top: 0;
+	bottom: 40%;
+	width: 100%;
+	text-align: center;
+	margin-top: -9.5em;
+}
+
+#time > span {
+	font-size: 40em;
+	text-shadow: -1px 0 white, 0 5px white, 5px 0 white, 0 -1px white;
+}
+
+#team-stadistics {
+	position: absolute;
+	top: 60%;
+	bottom: 0;
+	width: 100%;
+	background-color: white;
+	padding: 0;
+	margin: 0;
+}
+
+#team-stadistics > div {
+	position: absolute;
+	bottom: 0;
+	top: 0;
+	text-align: center;
+}
+
+#team-stadistics > div:last-child {
+	right: 0;
+}
+
+#team-stadistics > div > span.points {
+	font-size: 15em;
+	color: blue;
+	font-weight: bold;
+	width: 100%;
+	position: absolute;
+	top: -.2em;
+	left: 0;
+	right: 0;
+}
+
+#team-stadistics > div:last-child > span.points {
+	color: red;
+}
+
+#team-stadistics > div > span.fouls {
+	position: absolute;
+	padding: 0 .5em;
+	font-size: 5em;
+	color: yellow;
+	background-color: #444;
+	width: 100%;
+	bottom: 0;
+	left: 0;
+	font-weight: bold;
+}
+
+#team-stadistics > div > span.bonus {
+	position: absolute;
+	left: 1em;
+	bottom: .5em;
+	font-size: 3em;
+	text-transform: uppercase;
+	color: red;
+	text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
+	display: none;
+}
+
+#team-stadistics > div > span.bonus.visible {
+	display: block !important;
+}
+
+#team-stadistics > div > span.possessionTime {
+	background-color: #1D1D1D;
+	font-family: 'digital';
+	color: red;
+	font-size: 6em;
+	padding: .1em .25em;
+	border-top: 1px solid white;
+	text-shadow: -1px 0 white, 0 .5px white, .5px 0 white, 0 -1px white;
+	position: absolute;
+	right: 0;
+	display: none;
+}
+
+#team-stadistics > div > span.possessionTime.visible {
+	display: block !important;
+}
