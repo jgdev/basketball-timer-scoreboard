@@ -25,8 +25,10 @@ const utils = require('./utils'),
 
 var isPausedSound,
     isPaused,
+    isPausedPossession,
     timeInterval,
     gameTime,
+    possessionTime,
     teams,
     teamPossession;
 
@@ -42,19 +44,16 @@ const POSESSION_SECONDS = 24,
       BONUS_FOULS = 7;
 
 class TeamCounter {
-  constructor (container, game) {
+  constructor(container, game) {
     this.container = container;
     this.game = game;
     this.points = 0;
     this.fouls = 0;
-    this.possessionSeconds = POSESSION_SECONDS;
-    this.possessionInterval = undefined;
-
     this.updatePointsCount();
     this.updateFoulsCount();
   }
 
-  upPoint () {
+  upPoint() {
     this.points++;
     this.updatePointsCount();
   }
@@ -66,7 +65,7 @@ class TeamCounter {
     this.updatePointsCount();
   }
 
-  upFoul () {
+  upFoul() {
     this.fouls++;
     this.updateFoulsCount();
   }
@@ -82,30 +81,13 @@ class TeamCounter {
     this.container.querySelector('span.points').innerHTML = utils.pad(this.points);
   }
 
-  updatePossessionTime () {
-    this.container.querySelector('span.possessionTime').innerHTML = utils.pad(this.possessionTime); 
-  }
-
-  updateFoulsCount () {
-    if(this.fouls >= 7)
+  updateFoulsCount() {
+    if (this.fouls >= 7)
       $(this.container.querySelector('span.bonus')).addClass('visible');
     else
       $(this.container.querySelector('span.bonus')).removeClass('visible');
 
-    this.container.querySelector('span.fouls').innerHTML = this.fouls; 
-  }
-
-  dissablePossisionSeconds () {
-    $(this.container.querySelector('span.possessionTime')).removeClass('visible');
-    this.possessionTime = POSESSION_SECONDS;
-    this.possessionInterval = undefined;
-    this.updatePossessionTime();
-  }
-
-  enablePossessionSeconds () {
-    let elementPossessionTime = $(this.container.querySelector('span.possessionTime'));
-    elementPossessionTime.addClass('visible');
-    this.possessionTime = POSESSION_SECONDS;
+    this.container.querySelector('span.fouls').innerHTML = this.fouls;
   }
 }
 
@@ -118,7 +100,6 @@ class TeamCounter {
 let TimeSelectorElement = document.querySelector('#time > span');
 let TeamsElement = document.querySelectorAll('#team-stadistics > div');
 
-console.log(TeamsElement)
 // Private members.
 
 let Game = (function () {
@@ -130,8 +111,10 @@ let Game = (function () {
     setDefaults () {
       isPausedSound = false;
       isPaused = false;
+      isPausedPossession = false;
       timeInterval = null;
       gameTime = 0;
+      possessionTime = POSESSION_SECONDS;
       teams = [
         new TeamCounter(TeamsElement[0], this), 
         new TeamCounter(TeamsElement[1], this)
@@ -156,29 +139,32 @@ let Game = (function () {
         return;
       }
 
-      if (!isPaused && gameTime < 7) {
-        this.playSecondSound();
-      }
-
       if (isPaused) return;
 
-      // Possession counter
-      let actualTeamPossession = teams[teamPossession];
-
-      actualTeamPossession.possessionTime--;
-
-      actualTeamPossession.updatePossessionTime();
-
-      if (actualTeamPossession.possessionTime <= 0) {
-        this.pause(true);
-        this.changePossession();
+      if ((gameTime < 7) || (!isPausedPossession && possessionTime <= 6)) {
+        this.playSecondSound();
       }
 
       gameTime = gameTime - 1;
       this.updateTimeTable();
+
+      // Possession counter
+
+      if (!isPausedPossession && !isPaused) {
+        possessionTime = possessionTime - 1;
+
+        if (possessionTime <= 0) {
+          isPaused = true;
+            isPausedPossession = true;
+          this.playBuzzerSound();
+          possessionTime = POSESSION_SECONDS;
+        }
+
+        this.updatePossessionTime();
+      }
     }
 
-    start (defaultTime, possession) {
+    start (defaultTime) {
       if (gameTime !== 0) return;
 
       // let time = undefined || defaultTime;
@@ -189,11 +175,8 @@ let Game = (function () {
         if (time) {
           time = this.convertTimeFromHourFormat(parseInt(time.split(':')[0]), parseInt(time.split(':')[1]));
           gameTime = time;
-          teamPossession = possession ? 1 : 0;
-
-          teams[teamPossession].enablePossessionSeconds();
-
           isPaused = true;
+            isPausedPossession = true;
 
           this.setGameInterval(time);
           this.playBuzzerSound();
@@ -212,6 +195,7 @@ let Game = (function () {
     resume () {
       if (!isPaused) return;
       isPaused = false;
+        isPausedPossession = false;
     }
 
     updateTimeTable () {
@@ -219,17 +203,16 @@ let Game = (function () {
       TimeSelectorElement.innerHTML = `${ utils.pad(timeLeft.minutes) }:${ utils.pad(timeLeft.seconds) }`;
     }
 
+    updatePossessionTime () {
+      document.querySelector('span.possessionTime').innerHTML = utils.pad(possessionTime);
+    }
+
     reset () {
-      gameTime = 0;
-
       clearInterval(timeInterval);
-
-      for(let count in teams) {
-        teams[count].dissablePossisionSeconds();
-      }
 
       this.setDefaults();
       this.updateTimeTable();
+        this.updatePossessionTime();
     }
 
     playBuzzerSound () {
@@ -256,16 +239,14 @@ let Game = (function () {
       teams[!secondTeam ? 0 : 1].downFoul();
     }
 
-    changePossession (preventPause) {
-      if(!preventPause) isPaused = true;
+    changePossession () {
+      possessionTime = POSESSION_SECONDS;
+      isPausedPossession = true;
+      this.updatePossessionTime();
+    }
 
-      for(let count in teams) {
-        teams[count].dissablePossisionSeconds(preventPause);
-      }
-
-      teamPossession = teamPossession === 0 ? 1 : 0;
-
-      teams[teamPossession].enablePossessionSeconds();
+    pausePossession () {
+        isPausedPossession = !isPausedPossession;
     }
 
     convertTime (t) {

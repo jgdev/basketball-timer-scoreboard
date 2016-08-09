@@ -31,6 +31,8 @@ const KEY_PAUSE_GAME = 80,
 const Game = new (require('./js/game.js'))(),
       Sound = require('./js/sound.js');
 
+window.Sound = Sound;
+
 window.onload = () => {
   Game.reset();
 
@@ -96,6 +98,12 @@ window.onload = () => {
 
       case KEY_CHANGE_POSSESSION:
         Game.changePossession(e.shiftKey);
+        break;
+
+      // Pause possession
+
+      case KEY_PAUSE_POSSESSION:
+        Game.pausePossession();
         break;
 
       // Sounds effects

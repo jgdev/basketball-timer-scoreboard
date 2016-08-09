@@ -77,6 +77,8 @@ exports.on = (event, sound, callback) => {
   }
 };
 
+exports.SoundEffects = SoundEffects;
+
 exports.EFFECTS = {
   SOUND_SECOND_LEFT,
   SOUND_BUZZER,
@@ -89,14 +91,15 @@ exports.EFFECTS = {
   SOUND_YES,
   SOUND_8,
   SOUND_9,
-  SOUND_SECOND_LEFT,
-  SOUND_BUZZER,
   SOUND_BUZZER_2
 };
+
+// console.log(SoundEffects[0][0]);
 
 exports.playSoundEffect = sound => {
   switch (sound) {
     case SOUND_WELCOM_TO_NBA:
+      console.log(SoundEffects[0][0]);
       SoundEffects[0].play();
       break;
     case SOUND_NO_GOOD:
