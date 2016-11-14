@@ -168,7 +168,7 @@ let Game = (function () {
     askMessageDiego () {
       Dialogs().prompt('ESCRIBA EL MENSAJE', '', (message) => {
         if (message) {
-          child_process.exec(`/usr/bin/say -v Diego "${ message.toString() }"`);
+          child_process.exec(`/usr/bin/say -v ${ window.voice || 'Jorge' } "${ message.toString() }"`);
         }
       });
     }
