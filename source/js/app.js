@@ -22,6 +22,7 @@ const KEY_PAUSE_GAME = 80,
       KEY_CHANGE_POSSESSION = 71,
       KEY_PAUSE_POSSESSION = 72,
       KEY_PLAY_BUZZER = 66,
+      KEY_MESSAGE_DIEGO = 77,
       GAME_TIME = 780;
 
 /**
@@ -40,12 +41,6 @@ window.onload = () => {
     console.log(e.keyCode, e);
 
     if (document.querySelectorAll('.dialog-widget').length) return;
-
-    // Music
-
-    switch (true) {
-
-    }
 
     // NBA GAME CONTROLS
 
@@ -68,6 +63,12 @@ window.onload = () => {
 
       case KEY_START_GAME:
         Game.start(GAME_TIME, e.shiftKey);
+        break;
+
+      // Say Diego
+    
+      case KEY_MESSAGE_DIEGO:
+        Game.askMessageDiego();
         break;
 
       // Up points

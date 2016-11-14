@@ -16,7 +16,8 @@
 const utils = require('./utils'),
       Sound = require('./sound'),
       $ = require('jquery'),
-      Dialogs = require('dialogs');
+      Dialogs = require('dialogs'),
+      child_process = require('child_process');
 
 /**
  * Audio files
@@ -162,6 +163,14 @@ let Game = (function () {
 
         this.updatePossessionTime();
       }
+    }
+
+    askMessageDiego () {
+      Dialogs().prompt('ESCRIBA EL MENSAJE', '', (message) => {
+        if (message) {
+          child_process.exec(`/usr/bin/say -v Diego "${ message.toString() }"`);
+        }
+      });
     }
 
     start (defaultTime) {
